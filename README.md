@@ -52,6 +52,23 @@ Top actions
 3. Keep refund assumptions visible because they materially affect contribution profit.
 ```
 
+## Request a Custom Audit
+
+Use the free CLI for quick checks, or request a paid manual audit through Ko-fi:
+
+https://ko-fi.com/alan363
+
+Useful starting points:
+
+- [Custom audit offer](docs/custom-audit-offer.md)
+- [Sample audit request](samples/sample-audit-request.md)
+- [Sample audit report](samples/sample-audit-report.md)
+- [GitHub custom audit request template](.github/ISSUE_TEMPLATE/custom-audit-request.md)
+
+Please do not share marketplace passwords, payment credentials, ad account
+access, customer data, or private order exports. Public listing links, listing
+text, and approximate unit economics are enough for a safe first review.
+
 ## Input Options
 
 | Option | Description |
