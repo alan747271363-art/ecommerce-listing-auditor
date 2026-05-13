@@ -63,3 +63,25 @@ def test_audit_calculates_break_even_ad_spend() -> None:
 
     assert result.economics.break_even_ad_spend == 10.0
     assert result.economics.contribution_profit == 7.0
+
+
+def test_audit_includes_rewrite_suggestions() -> None:
+    data = AuditInput(
+        title="Portable Blender USB Rechargeable 500ml Smoothie Maker",
+        description=(
+            "Rechargeable portable blender with six blades, BPA-free cup, USB-C charging, "
+            "and easy cleaning for travel, gym, and office smoothies."
+        ),
+        price=29.99,
+        cost=9.40,
+        shipping=3.20,
+        ad_spend=5.00,
+        marketplace_fee_rate=0.15,
+        refund_rate=0.04,
+    )
+
+    result = audit_listing(data)
+
+    assert result.rewrite.title
+    assert len(result.rewrite.bullets) == 4
+    assert "break-even ad spend" in result.rewrite.bullets[2]

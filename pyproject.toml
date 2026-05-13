@@ -1,6 +1,6 @@
 [project]
 name = "ecommerce-listing-auditor"
-version = "0.6.0"
+version = "0.7.0"
 description = "CLI that audits ecommerce listing copy and unit economics."
 requires-python = ">=3.11"
 dependencies = []

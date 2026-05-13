@@ -43,6 +43,9 @@ def _money(value: float) -> str:
 def to_markdown(result: AuditResult) -> str:
     risk_lines = result.risks or ["No obvious high-risk claim phrases found."]
     action_lines = [f"{index}. {action}" for index, action in enumerate(result.actions, start=1)]
+    rewrite_lines = [
+        f"{index}. {bullet}" for index, bullet in enumerate(result.rewrite.bullets, start=1)
+    ]
     return "\n".join(
         [
             "Listing Audit",
@@ -66,6 +69,10 @@ def to_markdown(result: AuditResult) -> str:
             "",
             "Top actions",
             *action_lines,
+            "",
+            "Rewrite suggestions",
+            f"- Suggested title: {result.rewrite.title}",
+            *rewrite_lines,
         ]
     )
 
@@ -119,6 +126,9 @@ def _single_audit_html(label: str, data: AuditInput, result: AuditResult) -> str
       <ul>{_html_list(risks)}</ul>
       <h3>Top actions</h3>
       <ol>{_html_list(result.actions)}</ol>
+      <h3>Rewrite suggestions</h3>
+      <p><strong>Suggested title:</strong> {escape(result.rewrite.title)}</p>
+      <ol>{_html_list(result.rewrite.bullets)}</ol>
     </section>
     """.strip()
 
@@ -254,6 +264,10 @@ def result_to_dict(result: AuditResult) -> dict[str, object]:
         "economics_score": result.economics_score,
         "risks": result.risks,
         "actions": result.actions,
+        "rewrite": {
+            "title": result.rewrite.title,
+            "bullets": result.rewrite.bullets,
+        },
         "economics": {
             "marketplace_fee": result.economics.marketplace_fee,
             "expected_refund_cost": result.economics.expected_refund_cost,
@@ -406,6 +420,8 @@ def audit_row(label: str, data: AuditInput, result: AuditResult) -> dict[str, st
         "break_even_ad_spend": result.economics.break_even_ad_spend,
         "gross_margin_rate": result.economics.gross_margin_rate,
         "top_action": result.actions[0] if result.actions else "",
+        "suggested_title": result.rewrite.title,
+        "rewrite_bullets": "; ".join(result.rewrite.bullets),
         "risks": "; ".join(result.risks),
     }
 
@@ -423,6 +439,8 @@ def audits_to_csv(audits: list[tuple[str, AuditInput, AuditResult]]) -> str:
         "break_even_ad_spend",
         "gross_margin_rate",
         "top_action",
+        "suggested_title",
+        "rewrite_bullets",
         "risks",
     ]
     writer = csv.DictWriter(output, fieldnames=fieldnames, lineterminator="\n")

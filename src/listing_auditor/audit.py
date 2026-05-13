@@ -38,6 +38,48 @@ RISK_WORDS = {
     "permanent",
 }
 
+STOP_WORDS = {
+    "a",
+    "an",
+    "and",
+    "for",
+    "in",
+    "of",
+    "or",
+    "the",
+    "to",
+    "with",
+}
+
+USE_CASE_WORDS = {
+    "daily",
+    "gym",
+    "home",
+    "kitchen",
+    "office",
+    "outdoor",
+    "travel",
+    "work",
+}
+
+SPEC_WORDS = {
+    "blade",
+    "blades",
+    "cup",
+    "cups",
+    "pack",
+    "set",
+    "six",
+    "usb",
+}
+
+ACRONYM_WORDS = {
+    "bpa",
+    "led",
+    "usb",
+    "uv",
+}
+
 
 @dataclass(frozen=True)
 class AuditInput:
@@ -62,6 +104,12 @@ class Economics:
 
 
 @dataclass(frozen=True)
+class RewriteSuggestions:
+    title: str
+    bullets: list[str]
+
+
+@dataclass(frozen=True)
 class AuditResult:
     score: int
     title_score: int
@@ -70,6 +118,7 @@ class AuditResult:
     risks: list[str]
     actions: list[str]
     economics: Economics
+    rewrite: RewriteSuggestions
 
 
 def _tokens(text: str) -> list[str]:
@@ -78,6 +127,74 @@ def _tokens(text: str) -> list[str]:
 
 def _contains_phrase(text: str, phrase: str) -> bool:
     return phrase in text.lower()
+
+
+def _dedupe_tokens(text: str, limit: int) -> list[str]:
+    seen = set()
+    words = []
+    risky_tokens = {token for phrase in RISK_WORDS for token in _tokens(phrase)}
+    for word in _tokens(text):
+        if word in STOP_WORDS or word in risky_tokens or word in seen:
+            continue
+        seen.add(word)
+        words.append(word)
+        if len(words) == limit:
+            break
+    return words
+
+
+def _title_case(words: list[str]) -> str:
+    return " ".join(
+        word.upper() if word in ACRONYM_WORDS or any(character.isdigit() for character in word) else word.title()
+        for word in words
+    )
+
+
+def suggest_rewrite(data: AuditInput, economics: Economics, risks: list[str]) -> RewriteSuggestions:
+    keywords = _dedupe_tokens(f"{data.title} {data.description}", 20)
+    title_words = _dedupe_tokens(data.title, 8)
+    product_words = [
+        word
+        for word in title_words
+        if word not in BENEFIT_WORDS
+        and word not in USE_CASE_WORDS
+        and word not in SPEC_WORDS
+        and not any(character.isdigit() for character in word)
+    ][:4]
+    benefit_words = [word for word in keywords if word in BENEFIT_WORDS][:2]
+    use_case_words = [word for word in keywords if word in USE_CASE_WORDS and word not in benefit_words][:2]
+
+    product_phrase = _title_case(product_words) or _title_case(keywords[:4]) or "Featured Product"
+    benefit_phrase = f"{_title_case(benefit_words)} " if benefit_words else ""
+    use_case = _title_case(use_case_words[:3]) or "Everyday Use"
+    title = f"{benefit_phrase}{product_phrase} for {use_case}"
+    if len(title) < 45:
+        title = f"{title} with Easy Setup"
+    if len(title) > 120:
+        title = title[:117].rstrip() + "..."
+
+    trust_note = "Add warranty, review, testing, or return details before scaling traffic."
+    if any(word in _tokens(data.description) for word in TRUST_WORDS):
+        trust_note = "Lead with the strongest proof point, then support it with specs and use cases."
+
+    margin_note = (
+        "Keep ad spend below the break-even ad spend until conversion is proven."
+        if economics.contribution_profit > 0
+        else "Fix price, landed cost, or ad spend before increasing paid traffic."
+    )
+    risk_note = (
+        "Replace risky absolute claims with specific, provable benefits."
+        if risks
+        else "Keep claims specific and easy for a marketplace reviewer to verify."
+    )
+
+    bullets = [
+        f"Position the offer around {product_phrase.lower()} and one clear buyer use case.",
+        trust_note,
+        f"{margin_note} Current break-even ad spend is ${economics.break_even_ad_spend:.2f}.",
+        risk_note,
+    ]
+    return RewriteSuggestions(title=title, bullets=bullets)
 
 
 def score_title(title: str) -> tuple[int, list[str]]:
@@ -187,6 +304,7 @@ def audit_listing(data: AuditInput) -> AuditResult:
         actions.append("Remove or soften risky claims before marketplace or ad review.")
     if not actions:
         actions.append("Listing is in good shape; test images, price points, and first-review strategy next.")
+    rewrite = suggest_rewrite(data, economics, risks)
 
     return AuditResult(
         score=score,
@@ -196,4 +314,5 @@ def audit_listing(data: AuditInput) -> AuditResult:
         risks=risks,
         actions=actions[:5],
         economics=economics,
+        rewrite=rewrite,
     )

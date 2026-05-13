@@ -16,6 +16,7 @@ https://ko-fi.com/alan363
 - Title, description, and unit economics breakdown
 - Risk phrases that may hurt trust, marketplace review, or ad approval
 - Top priority actions for each listing
+- Suggested title and rewrite direction for each listing
 - Plain-language notes on where to improve title, bullets, margin, or ad spend
 
 ## Suggested Packages

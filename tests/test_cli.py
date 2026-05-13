@@ -27,6 +27,8 @@ def test_markdown_output_contains_actions_and_score() -> None:
     assert "Listing Audit" in output
     assert "Score:" in output
     assert "Top actions" in output
+    assert "Rewrite suggestions" in output
+    assert "Suggested title:" in output
 
 
 def test_json_output_is_valid_json() -> None:
@@ -43,6 +45,7 @@ def test_html_output_contains_client_ready_sections() -> None:
     assert "Listing Audit Report" in output
     assert "sample-listing" in output
     assert "Contribution profit after ads" in output
+    assert "Rewrite suggestions" in output
 
 
 def test_csv_audit_reads_multiple_rows(tmp_path: Path) -> None:
@@ -91,6 +94,8 @@ def test_csv_audit_reads_multiple_rows(tmp_path: Path) -> None:
     assert csv_rows[0]["label"] == "BLENDER-1"
     assert csv_rows[0]["score"].isdigit()
     assert "top_action" in csv_rows[0]
+    assert csv_rows[0]["suggested_title"]
+    assert csv_rows[0]["rewrite_bullets"]
 
 
 def test_csv_audit_rejects_missing_required_columns(tmp_path: Path) -> None:

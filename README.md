@@ -17,6 +17,7 @@ https://ko-fi.com/alan363
 - Risk words that may trigger marketplace or ad review
 - Gross margin, contribution margin, and break-even ad spend
 - Batch executive summary for multi-listing audits
+- Suggested title and rewrite direction for each listing
 - Actionable next steps ranked by likely business impact
 
 ## Quick Start
@@ -88,6 +89,10 @@ Top actions
 1. Add 2-3 proof points such as warranty, review count, certification, or guarantee.
 2. Add buyer-specific keywords that match search intent.
 3. Keep refund assumptions visible because they materially affect contribution profit.
+
+Rewrite suggestions
+- Suggested title: Portable Rechargeable Blender Smoothie Maker for Travel Gym
+1. Position the offer around blender smoothie maker and one clear buyer use case.
 ```
 
 ## Request a Custom Audit
@@ -133,6 +138,7 @@ This tool can be used as a lead magnet for:
 - Product listing audits
 - Amazon/Shopify title and bullet rewrites
 - Margin and break-even ad spend checks
+- Browser-ready audit reports with rewrite suggestions
 - Product launch checklist reviews
 - Bulk listing audit templates for ecommerce operators
 
