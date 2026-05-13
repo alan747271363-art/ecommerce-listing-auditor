@@ -144,8 +144,36 @@ def audit_csv(path: Path) -> list[tuple[str, AuditInput, AuditResult]]:
     return audits
 
 
+def batch_summary_lines(audits: list[tuple[str, AuditInput, AuditResult]]) -> list[str]:
+    average_score = sum(result.score for _, _, result in audits) / len(audits)
+    lowest_label, _, lowest_result = min(audits, key=lambda audit: audit[2].score)
+    negative_profit = [
+        label for label, _, result in audits if result.economics.contribution_profit <= 0
+    ]
+    priority_items = sorted(
+        audits,
+        key=lambda audit: (audit[2].score, audit[2].economics.contribution_profit),
+    )[:3]
+
+    lines = [
+        "Executive summary",
+        f"- Average score: {average_score:.1f}/100",
+        f"- Lowest scoring listing: {lowest_label} ({lowest_result.score}/100)",
+        f"- Listings at or below break-even after ads: {len(negative_profit)}",
+        "",
+        "Priority list",
+    ]
+    for index, (label, _, result) in enumerate(priority_items, start=1):
+        top_action = result.actions[0] if result.actions else "Review images, offer, and traffic quality."
+        lines.append(
+            f"{index}. {label}: {result.score}/100, "
+            f"{_money(result.economics.contribution_profit)} contribution profit. {top_action}"
+        )
+    return lines
+
+
 def csv_to_markdown(audits: list[tuple[str, AuditInput, AuditResult]]) -> str:
-    sections = ["Bulk Listing Audit", f"Listings audited: {len(audits)}"]
+    sections = ["Bulk Listing Audit", f"Listings audited: {len(audits)}", "", *batch_summary_lines(audits)]
     for label, data, result in audits:
         sections.extend(
             [

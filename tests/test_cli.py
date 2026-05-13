@@ -6,6 +6,7 @@ import pytest
 from listing_auditor.cli import (
     SAMPLE,
     audit_csv,
+    batch_summary_lines,
     csv_to_json,
     csv_to_markdown,
     to_json,
@@ -59,6 +60,8 @@ def test_csv_audit_reads_multiple_rows(tmp_path: Path) -> None:
 
     markdown = csv_to_markdown(audits)
     assert "Bulk Listing Audit" in markdown
+    assert "Executive summary" in markdown
+    assert "Priority list" in markdown
     assert "BLENDER-1" in markdown
 
     parsed = json.loads(csv_to_json(audits))
@@ -72,6 +75,36 @@ def test_csv_audit_rejects_missing_required_columns(tmp_path: Path) -> None:
 
     with pytest.raises(SystemExit, match="missing required columns"):
         audit_csv(csv_path)
+
+
+def test_batch_summary_prioritizes_lower_score_and_profit() -> None:
+    good = audit_listing(SAMPLE)
+    weak = audit_listing(
+        SAMPLE.__class__(
+            title="Blender",
+            description="Miracle blender with guaranteed results.",
+            price=19.99,
+            cost=18.0,
+            shipping=4.0,
+            ad_spend=7.0,
+            marketplace_fee_rate=0.15,
+            refund_rate=0.08,
+        )
+    )
+
+    summary = "\n".join(
+        batch_summary_lines(
+            [
+                ("GOOD", SAMPLE, good),
+                ("WEAK", SAMPLE, weak),
+            ]
+        )
+    )
+
+    assert "Average score:" in summary
+    assert "Lowest scoring listing: WEAK" in summary
+    assert "Listings at or below break-even after ads: 1" in summary
+    assert "1. WEAK:" in summary
 
 
 def test_write_or_print_creates_parent_directories(tmp_path: Path) -> None:

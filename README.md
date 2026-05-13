@@ -16,6 +16,7 @@ https://ko-fi.com/alan363
 - Description strength across benefits, specs, trust, and shipping cues
 - Risk words that may trigger marketplace or ad review
 - Gross margin, contribution margin, and break-even ad spend
+- Batch executive summary for multi-listing audits
 - Actionable next steps ranked by likely business impact
 
 ## Quick Start
@@ -49,6 +50,10 @@ For a batch CSV audit:
 ```bash
 python -m listing_auditor --input-csv samples/listings.csv
 ```
+
+Batch Markdown reports start with an executive summary showing average score,
+the lowest-scoring listing, how many listings are at or below break-even after
+ads, and the top priority listings to fix first.
 
 To save a client-ready report:
 
