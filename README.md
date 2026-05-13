@@ -20,6 +20,12 @@ https://ko-fi.com/alan363
 
 ## Quick Start
 
+Install the local package after cloning:
+
+```bash
+python -m pip install -e .
+```
+
 ```bash
 python -m listing_auditor \
   --title "Portable Blender USB Rechargeable 500ml Smoothie Maker" \
@@ -37,6 +43,20 @@ For JSON output:
 ```bash
 python -m listing_auditor --sample --format json
 ```
+
+For a batch CSV audit:
+
+```bash
+python -m listing_auditor --input-csv samples/listings.csv
+```
+
+The CSV needs these columns:
+
+```text
+title,description,price,cost,shipping,ad_spend,marketplace_fee_rate,refund_rate
+```
+
+An optional `sku` or `id` column is used as the report label.
 
 ## Example Output
 
@@ -83,6 +103,7 @@ text, and approximate unit economics are enough for a safe first review.
 | `--refund-rate` | Expected refund rate as decimal, e.g. `0.04` |
 | `--format` | `markdown` or `json` |
 | `--sample` | Run a built-in demo audit |
+| `--input-csv` | Audit multiple listings from a CSV file |
 
 ## Paid Use Cases
 
@@ -104,6 +125,7 @@ https://ko-fi.com/alan363
 python -m compileall src tests
 python -m pytest
 python -m listing_auditor --sample
+python -m listing_auditor --input-csv samples/listings.csv
 ```
 
 ## Safety Notes
