@@ -59,9 +59,14 @@ To save a client-ready report:
 
 ```bash
 python -m listing_auditor --input-csv samples/listings.csv --output reports/audit.md
+python -m listing_auditor --input-csv samples/listings.csv --format html --output reports/audit.html
 python -m listing_auditor --input-csv samples/listings.csv --format json --output reports/audit.json
 python -m listing_auditor --input-csv samples/listings.csv --format csv --output reports/audit-summary.csv
 ```
+
+Use `--format html` when you want a client-facing report that opens directly in
+a browser. It is a single self-contained file with the score, risks, unit
+economics, and next actions for each listing.
 
 The CSV needs these columns:
 
@@ -96,6 +101,7 @@ Useful starting points:
 - [Custom audit offer](docs/custom-audit-offer.md)
 - [Sample audit request](samples/sample-audit-request.md)
 - [Sample audit report](samples/sample-audit-report.md)
+- [Sample browser-ready HTML report](samples/sample-audit-report.html)
 - [GitHub custom audit request template](.github/ISSUE_TEMPLATE/custom-audit-request.md)
 
 Please do not share marketplace passwords, payment credentials, ad account
@@ -114,7 +120,7 @@ text, and approximate unit economics are enough for a safe first review.
 | `--ad-spend` | Expected ad spend per order |
 | `--marketplace-fee-rate` | Marketplace fee as decimal, e.g. `0.15` |
 | `--refund-rate` | Expected refund rate as decimal, e.g. `0.04` |
-| `--format` | `markdown`, `json`, or `csv` |
+| `--format` | `markdown`, `json`, `csv`, or `html` |
 | `--sample` | Run a built-in demo audit |
 | `--input-csv` | Audit multiple listings from a CSV file |
 | `--output` | Save the report to a file instead of only printing it |
@@ -141,6 +147,7 @@ python -m pytest
 python -m listing_auditor --sample
 python -m listing_auditor --input-csv samples/listings.csv
 python -m listing_auditor --input-csv samples/listings.csv --output reports/audit.md
+python -m listing_auditor --input-csv samples/listings.csv --format html --output reports/audit.html
 python -m listing_auditor --input-csv samples/listings.csv --format csv --output reports/audit-summary.csv
 ```
 

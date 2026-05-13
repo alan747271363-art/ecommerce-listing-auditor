@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bulk Listing Audit Report</title>
+  <style>
+    :root {
+      color: #17202a;
+      background: #f7f5ef;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    body {
+      margin: 0;
+      background: #f7f5ef;
+    }
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+    h1 {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+    h3 {
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+    ul, ol {
+      margin-top: 0;
+      padding-left: 22px;
+    }
+    li {
+      margin: 6px 0;
+    }
+    .subtle {
+      color: #586575;
+      margin-bottom: 24px;
+    }
+    .summary, .audit-card {
+      background: #ffffff;
+      border: 1px solid #e0ddd4;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 24px rgba(23, 32, 42, 0.06);
+    }
+    .audit-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .eyebrow {
+      color: #69717c;
+      font-size: 12px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .score {
+      border-radius: 6px;
+      min-width: 90px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+    .good {
+      background: #dff4e6;
+      color: #116238;
+    }
+    .watch {
+      background: #fff0c2;
+      color: #7a4b00;
+    }
+    .urgent {
+      background: #ffe0df;
+      color: #9b2320;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+    @media (max-width: 680px) {
+      .audit-head, .grid {
+        display: block;
+      }
+      .score {
+        display: inline-block;
+        margin-top: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Bulk Listing Audit Report</h1>
+<p class="subtle">Listings audited: 2</p>
+<section class="summary">
+<h2>Executive summary</h2>
+<ul><li>Executive summary</li>
+<li>Average score: 82.5/100</li>
+<li>Lowest scoring listing: BLENDER-1 (77/100)</li>
+<li>Listings at or below break-even after ads: 0</li>
+<li></li>
+<li>Priority list</li>
+<li>1. BLENDER-1: 77/100, $6.69 contribution profit. Expand the description with benefits, specs, use cases, and what is included.</li>
+<li>2. MUG-1: 88/100, $7.40 contribution profit. Expand the description with benefits, specs, use cases, and what is included.</li></ul>
+</section>
+<section class="audit-card">
+      <div class="audit-head">
+        <div>
+          <p class="eyebrow">BLENDER-1</p>
+          <h2>Portable Blender USB Rechargeable 500ml Smoothie Maker</h2>
+        </div>
+        <strong class="score watch">77/100</strong>
+      </div>
+      <div class="grid">
+        <div>
+          <h3>Score breakdown</h3>
+          <ul>
+            <li>Title: 35/35</li>
+            <li>Description: 19/35</li>
+            <li>Economics: 23/30</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Unit economics</h3>
+          <ul>
+            <li>Contribution profit after ads: $6.69</li>
+            <li>Gross margin rate: 39.0%</li>
+            <li>Break-even ad spend: $11.69</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Risks</h3>
+      <ul><li>No obvious high-risk claim phrases found.</li></ul>
+      <h3>Top actions</h3>
+      <ol><li>Expand the description with benefits, specs, use cases, and what is included.</li>
+<li>Mention shipping, delivery, returns, or after-sale expectations.</li>
+<li>Margin is workable but thin; keep ad tests small until conversion is proven.</li></ol>
+    </section>
+<section class="audit-card">
+      <div class="audit-head">
+        <div>
+          <p class="eyebrow">MUG-1</p>
+          <h2>Leakproof Travel Mug Stainless Steel Coffee Cup</h2>
+        </div>
+        <strong class="score good">88/100</strong>
+      </div>
+      <div class="grid">
+        <div>
+          <h3>Score breakdown</h3>
+          <ul>
+            <li>Title: 35/35</li>
+            <li>Description: 23/35</li>
+            <li>Economics: 30/30</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Unit economics</h3>
+          <ul>
+            <li>Contribution profit after ads: $7.40</li>
+            <li>Gross margin rate: 47.5%</li>
+            <li>Break-even ad spend: $11.40</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Risks</h3>
+      <ul><li>No obvious high-risk claim phrases found.</li></ul>
+      <h3>Top actions</h3>
+      <ol><li>Expand the description with benefits, specs, use cases, and what is included.</li></ol>
+    </section>
+  </main>
+</body>
+</html>

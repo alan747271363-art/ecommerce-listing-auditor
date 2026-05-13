@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+from html import escape
 from io import StringIO
 import json
 from pathlib import Path
@@ -71,6 +72,178 @@ def to_markdown(result: AuditResult) -> str:
 
 def to_json(result: AuditResult) -> str:
     return json.dumps(result_to_dict(result), indent=2)
+
+
+def _score_class(score: int) -> str:
+    if score >= 80:
+        return "good"
+    if score >= 60:
+        return "watch"
+    return "urgent"
+
+
+def _html_list(items: list[str]) -> str:
+    return "\n".join(f"<li>{escape(item)}</li>" for item in items)
+
+
+def _single_audit_html(label: str, data: AuditInput, result: AuditResult) -> str:
+    risks = result.risks or ["No obvious high-risk claim phrases found."]
+    return f"""
+    <section class="audit-card">
+      <div class="audit-head">
+        <div>
+          <p class="eyebrow">{escape(label)}</p>
+          <h2>{escape(data.title)}</h2>
+        </div>
+        <strong class="score {_score_class(result.score)}">{result.score}/100</strong>
+      </div>
+      <div class="grid">
+        <div>
+          <h3>Score breakdown</h3>
+          <ul>
+            <li>Title: {result.title_score}/35</li>
+            <li>Description: {result.description_score}/35</li>
+            <li>Economics: {result.economics_score}/30</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Unit economics</h3>
+          <ul>
+            <li>Contribution profit after ads: {_money(result.economics.contribution_profit)}</li>
+            <li>Gross margin rate: {result.economics.gross_margin_rate:.1%}</li>
+            <li>Break-even ad spend: {_money(result.economics.break_even_ad_spend)}</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Risks</h3>
+      <ul>{_html_list(risks)}</ul>
+      <h3>Top actions</h3>
+      <ol>{_html_list(result.actions)}</ol>
+    </section>
+    """.strip()
+
+
+def html_document(title: str, body: str) -> str:
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{escape(title)}</title>
+  <style>
+    :root {{
+      color: #17202a;
+      background: #f7f5ef;
+      font-family: Arial, Helvetica, sans-serif;
+    }}
+    body {{
+      margin: 0;
+      background: #f7f5ef;
+    }}
+    main {{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }}
+    h1, h2, h3, p {{
+      margin-top: 0;
+    }}
+    h1 {{
+      font-size: 34px;
+      margin-bottom: 8px;
+    }}
+    h2 {{
+      font-size: 22px;
+      margin-bottom: 8px;
+    }}
+    h3 {{
+      font-size: 15px;
+      margin-bottom: 8px;
+    }}
+    ul, ol {{
+      margin-top: 0;
+      padding-left: 22px;
+    }}
+    li {{
+      margin: 6px 0;
+    }}
+    .subtle {{
+      color: #586575;
+      margin-bottom: 24px;
+    }}
+    .summary, .audit-card {{
+      background: #ffffff;
+      border: 1px solid #e0ddd4;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 24px rgba(23, 32, 42, 0.06);
+    }}
+    .audit-head {{
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }}
+    .eyebrow {{
+      color: #69717c;
+      font-size: 12px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }}
+    .score {{
+      border-radius: 6px;
+      min-width: 90px;
+      padding: 10px 12px;
+      text-align: center;
+    }}
+    .good {{
+      background: #dff4e6;
+      color: #116238;
+    }}
+    .watch {{
+      background: #fff0c2;
+      color: #7a4b00;
+    }}
+    .urgent {{
+      background: #ffe0df;
+      color: #9b2320;
+    }}
+    .grid {{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }}
+    @media (max-width: 680px) {{
+      .audit-head, .grid {{
+        display: block;
+      }}
+      .score {{
+        display: inline-block;
+        margin-top: 8px;
+      }}
+    }}
+  </style>
+</head>
+<body>
+  <main>
+    {body}
+  </main>
+</body>
+</html>"""
+
+
+def to_html(label: str, data: AuditInput, result: AuditResult) -> str:
+    body = "\n".join(
+        [
+            "<h1>Listing Audit Report</h1>",
+            '<p class="subtle">Client-ready ecommerce listing review.</p>',
+            _single_audit_html(label, data, result),
+        ]
+    )
+    return html_document("Listing Audit Report", body)
 
 
 def result_to_dict(result: AuditResult) -> dict[str, object]:
@@ -202,6 +375,25 @@ def csv_to_json(audits: list[tuple[str, AuditInput, AuditResult]]) -> str:
     )
 
 
+def csv_to_html(audits: list[tuple[str, AuditInput, AuditResult]]) -> str:
+    summary = "\n".join(f"<li>{escape(line.lstrip('- '))}</li>" for line in batch_summary_lines(audits))
+    cards = "\n".join(
+        _single_audit_html(label, data, result) for label, data, result in audits
+    )
+    body = "\n".join(
+        [
+            "<h1>Bulk Listing Audit Report</h1>",
+            f'<p class="subtle">Listings audited: {len(audits)}</p>',
+            '<section class="summary">',
+            "<h2>Executive summary</h2>",
+            f"<ul>{summary}</ul>",
+            "</section>",
+            cards,
+        ]
+    )
+    return html_document("Bulk Listing Audit Report", body)
+
+
 def audit_row(label: str, data: AuditInput, result: AuditResult) -> dict[str, str | int | float]:
     return {
         "label": label,
@@ -268,7 +460,7 @@ def parse_args() -> argparse.Namespace:
         help="Marketplace fee rate as a decimal.",
     )
     parser.add_argument("--refund-rate", type=float, default=0.03, help="Refund rate as a decimal.")
-    parser.add_argument("--format", choices=("markdown", "json", "csv"), default="markdown")
+    parser.add_argument("--format", choices=("markdown", "json", "csv", "html"), default="markdown")
     return parser.parse_args()
 
 
@@ -301,6 +493,8 @@ def main() -> int:
             content = csv_to_json(audits)
         elif args.format == "csv":
             content = audits_to_csv(audits)
+        elif args.format == "html":
+            content = csv_to_html(audits)
         else:
             content = csv_to_markdown(audits)
         write_or_print(content, args.output)
@@ -312,6 +506,8 @@ def main() -> int:
         content = to_json(result)
     elif args.format == "csv":
         content = audits_to_csv([("single-listing", data, result)])
+    elif args.format == "html":
+        content = to_html("single-listing", data, result)
     else:
         content = to_markdown(result)
     write_or_print(content, args.output)

@@ -11,7 +11,9 @@ from listing_auditor.cli import (
     audit_csv,
     batch_summary_lines,
     csv_to_json,
+    csv_to_html,
     csv_to_markdown,
+    to_html,
     to_json,
     to_markdown,
     write_or_print,
@@ -32,6 +34,15 @@ def test_json_output_is_valid_json() -> None:
 
     assert parsed["score"] > 0
     assert "economics" in parsed
+
+
+def test_html_output_contains_client_ready_sections() -> None:
+    output = to_html("sample-listing", SAMPLE, audit_listing(SAMPLE))
+
+    assert "<!doctype html>" in output
+    assert "Listing Audit Report" in output
+    assert "sample-listing" in output
+    assert "Contribution profit after ads" in output
 
 
 def test_csv_audit_reads_multiple_rows(tmp_path: Path) -> None:
@@ -70,6 +81,11 @@ def test_csv_audit_reads_multiple_rows(tmp_path: Path) -> None:
     parsed = json.loads(csv_to_json(audits))
     assert parsed[1]["label"] == "MUG-1"
     assert parsed[1]["audit"]["score"] > 0
+
+    html = csv_to_html(audits)
+    assert "Bulk Listing Audit Report" in html
+    assert "Listings audited: 2" in html
+    assert "BLENDER-1" in html
 
     csv_rows = list(csv.DictReader(StringIO(audits_to_csv(audits))))
     assert csv_rows[0]["label"] == "BLENDER-1"
