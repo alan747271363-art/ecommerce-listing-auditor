@@ -1,0 +1,17 @@
+[project]
+name = "ecommerce-listing-auditor"
+version = "0.1.0"
+description = "CLI that audits ecommerce listing copy and unit economics."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+listing-auditor = "listing_auditor.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
