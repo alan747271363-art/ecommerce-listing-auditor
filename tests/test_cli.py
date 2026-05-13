@@ -3,7 +3,15 @@ from pathlib import Path
 
 import pytest
 
-from listing_auditor.cli import SAMPLE, audit_csv, csv_to_json, csv_to_markdown, to_json, to_markdown
+from listing_auditor.cli import (
+    SAMPLE,
+    audit_csv,
+    csv_to_json,
+    csv_to_markdown,
+    to_json,
+    to_markdown,
+    write_or_print,
+)
 from listing_auditor.audit import audit_listing
 
 
@@ -64,3 +72,11 @@ def test_csv_audit_rejects_missing_required_columns(tmp_path: Path) -> None:
 
     with pytest.raises(SystemExit, match="missing required columns"):
         audit_csv(csv_path)
+
+
+def test_write_or_print_creates_parent_directories(tmp_path: Path) -> None:
+    output_path = tmp_path / "reports" / "audit.md"
+
+    write_or_print("Listing Audit\nScore: 90/100", output_path)
+
+    assert output_path.read_text(encoding="utf-8") == "Listing Audit\nScore: 90/100\n"

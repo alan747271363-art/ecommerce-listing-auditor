@@ -173,10 +173,21 @@ def csv_to_json(audits: list[tuple[str, AuditInput, AuditResult]]) -> str:
     )
 
 
+def write_or_print(content: str, output_path: Path | None) -> None:
+    if output_path is None:
+        print(content)
+        return
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(f"{content}\n", encoding="utf-8")
+    print(f"Wrote audit report to {output_path}")
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Audit ecommerce listing copy and economics.")
     parser.add_argument("--sample", action="store_true", help="Run the built-in sample audit.")
     parser.add_argument("--input-csv", type=Path, help="Audit multiple listings from a CSV file.")
+    parser.add_argument("--output", type=Path, help="Write the audit report to a file.")
     parser.add_argument("--title", default="", help="Product title.")
     parser.add_argument("--description", default="", help="Product description or bullet text.")
     parser.add_argument("--price", type=float, default=0.0, help="Sale price.")
@@ -219,9 +230,11 @@ def main() -> int:
     args = parse_args()
     if args.input_csv:
         audits = audit_csv(args.input_csv)
-        print(csv_to_json(audits) if args.format == "json" else csv_to_markdown(audits))
+        content = csv_to_json(audits) if args.format == "json" else csv_to_markdown(audits)
+        write_or_print(content, args.output)
         return 0
 
     result = audit_listing(input_from_args(args))
-    print(to_json(result) if args.format == "json" else to_markdown(result))
+    content = to_json(result) if args.format == "json" else to_markdown(result)
+    write_or_print(content, args.output)
     return 0

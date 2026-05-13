@@ -50,6 +50,13 @@ For a batch CSV audit:
 python -m listing_auditor --input-csv samples/listings.csv
 ```
 
+To save a client-ready report:
+
+```bash
+python -m listing_auditor --input-csv samples/listings.csv --output reports/audit.md
+python -m listing_auditor --input-csv samples/listings.csv --format json --output reports/audit.json
+```
+
 The CSV needs these columns:
 
 ```text
@@ -104,6 +111,7 @@ text, and approximate unit economics are enough for a safe first review.
 | `--format` | `markdown` or `json` |
 | `--sample` | Run a built-in demo audit |
 | `--input-csv` | Audit multiple listings from a CSV file |
+| `--output` | Save the report to a file instead of only printing it |
 
 ## Paid Use Cases
 
@@ -126,6 +134,7 @@ python -m compileall src tests
 python -m pytest
 python -m listing_auditor --sample
 python -m listing_auditor --input-csv samples/listings.csv
+python -m listing_auditor --input-csv samples/listings.csv --output reports/audit.md
 ```
 
 ## Safety Notes
