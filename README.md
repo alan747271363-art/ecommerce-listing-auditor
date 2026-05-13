@@ -99,6 +99,7 @@ https://ko-fi.com/alan363
 Useful starting points:
 
 - [Custom audit offer](docs/custom-audit-offer.md)
+- [Browser-ready HTML report service](docs/html-report-service.md)
 - [Sample audit request](samples/sample-audit-request.md)
 - [Sample audit report](samples/sample-audit-report.md)
 - [Sample browser-ready HTML report](samples/sample-audit-report.html)
