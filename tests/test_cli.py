@@ -1,10 +1,13 @@
+import csv
 import json
+from io import StringIO
 from pathlib import Path
 
 import pytest
 
 from listing_auditor.cli import (
     SAMPLE,
+    audits_to_csv,
     audit_csv,
     batch_summary_lines,
     csv_to_json,
@@ -67,6 +70,11 @@ def test_csv_audit_reads_multiple_rows(tmp_path: Path) -> None:
     parsed = json.loads(csv_to_json(audits))
     assert parsed[1]["label"] == "MUG-1"
     assert parsed[1]["audit"]["score"] > 0
+
+    csv_rows = list(csv.DictReader(StringIO(audits_to_csv(audits))))
+    assert csv_rows[0]["label"] == "BLENDER-1"
+    assert csv_rows[0]["score"].isdigit()
+    assert "top_action" in csv_rows[0]
 
 
 def test_csv_audit_rejects_missing_required_columns(tmp_path: Path) -> None:

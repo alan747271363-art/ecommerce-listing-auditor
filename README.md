@@ -60,6 +60,7 @@ To save a client-ready report:
 ```bash
 python -m listing_auditor --input-csv samples/listings.csv --output reports/audit.md
 python -m listing_auditor --input-csv samples/listings.csv --format json --output reports/audit.json
+python -m listing_auditor --input-csv samples/listings.csv --format csv --output reports/audit-summary.csv
 ```
 
 The CSV needs these columns:
@@ -113,7 +114,7 @@ text, and approximate unit economics are enough for a safe first review.
 | `--ad-spend` | Expected ad spend per order |
 | `--marketplace-fee-rate` | Marketplace fee as decimal, e.g. `0.15` |
 | `--refund-rate` | Expected refund rate as decimal, e.g. `0.04` |
-| `--format` | `markdown` or `json` |
+| `--format` | `markdown`, `json`, or `csv` |
 | `--sample` | Run a built-in demo audit |
 | `--input-csv` | Audit multiple listings from a CSV file |
 | `--output` | Save the report to a file instead of only printing it |
@@ -140,6 +141,7 @@ python -m pytest
 python -m listing_auditor --sample
 python -m listing_auditor --input-csv samples/listings.csv
 python -m listing_auditor --input-csv samples/listings.csv --output reports/audit.md
+python -m listing_auditor --input-csv samples/listings.csv --format csv --output reports/audit-summary.csv
 ```
 
 ## Safety Notes

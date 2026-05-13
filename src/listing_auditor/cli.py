@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+from io import StringIO
 import json
 from pathlib import Path
 
@@ -201,6 +202,44 @@ def csv_to_json(audits: list[tuple[str, AuditInput, AuditResult]]) -> str:
     )
 
 
+def audit_row(label: str, data: AuditInput, result: AuditResult) -> dict[str, str | int | float]:
+    return {
+        "label": label,
+        "title": data.title,
+        "score": result.score,
+        "title_score": result.title_score,
+        "description_score": result.description_score,
+        "economics_score": result.economics_score,
+        "contribution_profit": result.economics.contribution_profit,
+        "break_even_ad_spend": result.economics.break_even_ad_spend,
+        "gross_margin_rate": result.economics.gross_margin_rate,
+        "top_action": result.actions[0] if result.actions else "",
+        "risks": "; ".join(result.risks),
+    }
+
+
+def audits_to_csv(audits: list[tuple[str, AuditInput, AuditResult]]) -> str:
+    output = StringIO()
+    fieldnames = [
+        "label",
+        "title",
+        "score",
+        "title_score",
+        "description_score",
+        "economics_score",
+        "contribution_profit",
+        "break_even_ad_spend",
+        "gross_margin_rate",
+        "top_action",
+        "risks",
+    ]
+    writer = csv.DictWriter(output, fieldnames=fieldnames, lineterminator="\n")
+    writer.writeheader()
+    for label, data, result in audits:
+        writer.writerow(audit_row(label, data, result))
+    return output.getvalue().rstrip("\n")
+
+
 def write_or_print(content: str, output_path: Path | None) -> None:
     if output_path is None:
         print(content)
@@ -229,7 +268,7 @@ def parse_args() -> argparse.Namespace:
         help="Marketplace fee rate as a decimal.",
     )
     parser.add_argument("--refund-rate", type=float, default=0.03, help="Refund rate as a decimal.")
-    parser.add_argument("--format", choices=("markdown", "json"), default="markdown")
+    parser.add_argument("--format", choices=("markdown", "json", "csv"), default="markdown")
     return parser.parse_args()
 
 
@@ -258,11 +297,22 @@ def main() -> int:
     args = parse_args()
     if args.input_csv:
         audits = audit_csv(args.input_csv)
-        content = csv_to_json(audits) if args.format == "json" else csv_to_markdown(audits)
+        if args.format == "json":
+            content = csv_to_json(audits)
+        elif args.format == "csv":
+            content = audits_to_csv(audits)
+        else:
+            content = csv_to_markdown(audits)
         write_or_print(content, args.output)
         return 0
 
-    result = audit_listing(input_from_args(args))
-    content = to_json(result) if args.format == "json" else to_markdown(result)
+    data = input_from_args(args)
+    result = audit_listing(data)
+    if args.format == "json":
+        content = to_json(result)
+    elif args.format == "csv":
+        content = audits_to_csv([("single-listing", data, result)])
+    else:
+        content = to_markdown(result)
     write_or_print(content, args.output)
     return 0
