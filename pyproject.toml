@@ -2,8 +2,27 @@
 name = "ecommerce-listing-auditor"
 version = "0.7.0"
 description = "CLI that audits ecommerce listing copy and unit economics."
+readme = "README.md"
 requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Alan" }]
+keywords = ["ecommerce", "listing-audit", "seo", "python-cli", "unit-economics"]
 dependencies = []
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business",
+]
+
+[project.urls]
+Homepage = "https://github.com/alan747271363-art/ecommerce-listing-auditor"
+Issues = "https://github.com/alan747271363-art/ecommerce-listing-auditor/issues"
+Funding = "https://ko-fi.com/alan363"
 
 [project.scripts]
 listing-auditor = "listing_auditor.cli:main"
