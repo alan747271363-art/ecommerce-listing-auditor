@@ -1,5 +1,9 @@
 # Ecommerce Listing Auditor
 
+[![CI](https://github.com/alan747271363-art/ecommerce-listing-auditor/actions/workflows/ci.yml/badge.svg)](https://github.com/alan747271363-art/ecommerce-listing-auditor/actions/workflows/ci.yml)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 Practical command-line auditor for ecommerce product listings. It scores listing
 copy, flags conversion risks, and estimates margin pressure from price, landed
 cost, ads, marketplace fees, shipping, and refunds.
@@ -9,6 +13,24 @@ quick checks; paid custom audits and template tuning can be requested through
 Ko-fi:
 
 https://ko-fi.com/alan363
+
+## Open Source Maintenance
+
+This is an actively maintained public open-source project owned by
+`alan747271363-art`. It is intentionally small, dependency-light, and safe to run
+offline so sellers can review listing text and rough unit economics without
+sharing store credentials or customer data.
+
+Maintenance signals:
+
+- CI runs on every push and pull request.
+- Releases and sample reports are kept in the repository.
+- Contribution, security, maintainer, and roadmap documents are available.
+- Issue and pull request templates explain the information needed for review.
+
+See [MAINTAINERS.md](MAINTAINERS.md), [CONTRIBUTING.md](CONTRIBUTING.md),
+[ROADMAP.md](ROADMAP.md), and
+[docs/oss-maintenance-plan.md](docs/oss-maintenance-plan.md).
 
 ## What It Checks
 
@@ -151,6 +173,7 @@ https://ko-fi.com/alan363
 ```bash
 python -m compileall src tests
 python -m pytest
+python -m ruff check src tests
 python -m listing_auditor --sample
 python -m listing_auditor --input-csv samples/listings.csv
 python -m listing_auditor --input-csv samples/listings.csv --output reports/audit.md
@@ -162,3 +185,7 @@ python -m listing_auditor --input-csv samples/listings.csv --format csv --output
 
 This tool does not connect to marketplaces, payment processors, ad accounts, or
 stores. It only analyzes text and numbers provided by the user.
+
+## License
+
+MIT License. See [LICENSE](LICENSE).
